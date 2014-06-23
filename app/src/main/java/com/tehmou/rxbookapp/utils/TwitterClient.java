@@ -1,16 +1,15 @@
 package com.tehmou.rxbookapp.utils;
 
+import android.util.Log;
+
 import java.util.List;
 import java.util.Properties;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
-import twitter4j.Query;
-import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -39,7 +38,10 @@ public class TwitterClient {
                     @Override
                     public void call(Subscriber<? super List<Status>> subscriber) {
                         try {
-                            List<Status> statuses = getStatuses();
+                            List<Status> statuses = twitter.getHomeTimeline();
+                            for (Status status : statuses) {
+                                Log.d(TAG, status.getText());
+                            }
                             subscriber.onNext(statuses);
                             subscriber.onCompleted();
                         } catch (Exception e) {
@@ -48,11 +50,5 @@ public class TwitterClient {
                     }
                 })
                 .subscribeOn(Schedulers.newThread());
-    }
-
-    private List<Status> getStatuses() throws TwitterException {
-        Query query = new Query("source:twitter4j yusukey");
-        QueryResult results = twitter.search(query);
-        return results.getTweets();
     }
 }
