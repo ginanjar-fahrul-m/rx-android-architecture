@@ -17,6 +17,14 @@ android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0'
+    }
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
@@ -36,6 +44,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'io.reactivex:rxjava:1.0.0'
     compile 'io.reactivex:rxandroid:0.22.0'
+    compile 'org.twitter4j:twitter4j-core:3.0.5'
+    compile 'org.twitter4j:twitter4j-async:3.0.5'
 
     // Unit test build
     testCompile 'junit:junit:4.8.2'
