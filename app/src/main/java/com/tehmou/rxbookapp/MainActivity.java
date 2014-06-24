@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.tehmou.rxbookapp.provider.DBHelper;
 import com.tehmou.rxbookapp.utils.TwitterClient;
 
 import java.io.IOException;
@@ -20,6 +22,8 @@ import twitter4j.Status;
 
 public class MainActivity extends ActionBarActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
+
+    private DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +61,19 @@ public class MainActivity extends ActionBarActivity {
         } catch (IOException e) {
             Log.e(TAG, "Unable to read assets/twitter.properties", e);
         }
+
+        helper = OpenHelperManager.getHelper(this, DBHelper.class);
+        helper.getWritableDatabase();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (helper != null) {
+            OpenHelperManager.releaseHelper();
+            helper = null;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

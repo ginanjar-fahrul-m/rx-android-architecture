@@ -59,9 +59,6 @@ public class TwitterStatus {
     long retweetedStatus;
 
     @DatabaseField
-    long[] contributors;
-
-    @DatabaseField
     int getRetweetCount;
 
     @DatabaseField
