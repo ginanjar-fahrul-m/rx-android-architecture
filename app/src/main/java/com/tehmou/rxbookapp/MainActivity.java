@@ -8,11 +8,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import com.tehmou.rxbookapp.pojo.TwitterStatus;
 import com.tehmou.rxbookapp.provider.DBHelper;
 import com.tehmou.rxbookapp.utils.TwitterClient;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
@@ -24,6 +29,10 @@ public class MainActivity extends ActionBarActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
 
     private DBHelper helper;
+
+    public DBHelper getHelper() {
+        return helper;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +65,17 @@ public class MainActivity extends ActionBarActivity {
                         @Override
                         public void onNext(List<Status> statuses) {
                             Log.d(TAG, "Found " + statuses.size() + " tweets");
+                            try {
+                                ConnectionSource connectionSource = helper.getConnectionSource();
+                                Dao<TwitterStatus, Long> statusDao = DaoManager.createDao(connectionSource, TwitterStatus.class);
+                                for (Status status : statuses) {
+                                    TwitterStatus twitterStatus = new TwitterStatus(status);
+                                    statusDao.create(twitterStatus);
+                                }
+                                connectionSource.close();
+                            } catch (SQLException e) {
+                                Log.e(TAG, "Error writing statuses", e);
+                            }
                         }
                     });
         } catch (IOException e) {
